@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Bumper Car Quiz - Zakat Fitrah</title>
+
+<style>
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #e8f5e9;
+    color: #333;
+}
+
+header {
+    background: #2e7d32;
+    color: white;
+    text-align: center;
+    padding: 25px;
+}
+
+header h1 {
+    margin: 0;
+}
+
+.container {
+    width: 90%;
+    max-width: 900px;
+    margin: 25px auto;
+}
+
+/* LINTASAN */
+
+.track {
+    background: #555;
+    border-radius: 15px;
+    padding: 10px;
+    margin-bottom: 25px;
+}
+
+.lane {
+    position: relative;
+    height: 80px;
+    border-bottom: 3px dashed white;
+    display: flex;
+    align-items: center;
+}
+
+.lane:last-child {
+    border-bottom: none;
+}
+
+.player {
+    color: white;
+    font-weight: bold;
+    width: 100px;
+    z-index: 2;
+}
+
+.car {
+    position: absolute;
+    left: 100px;
+    font-size: 40px;
+    transition: left 0.6s;
+}
+
+/* FINISH */
+
+.finish {
+    position: absolute;
+    right: 20px;
+    font-size: 30px;
+}
+
+/* SOAL */
+
+.quiz-box {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+.question {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.answer {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 10px;
+    background: #f1f8e9;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: left;
+}
+
+.answer:hover {
+    background: #c8e6c9;
+}
+
+.score {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.score-box {
+    flex: 1;
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    background: #2e7d32;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background: #1b5e20;
+}
+
+#feedback {
+    font-weight: bold;
+    margin: 15px 0;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+<h1>🚗💨 BUMPER CAR QUIZ</h1>
+
+<p>
+Kuis Cepat Tepat - Zakat Fitrah
+</p>
+
+</header>
+
+
+<div class="container">
+
+
+<!-- LINTASAN -->
+
+<div class="track">
+
+<div class="lane">
+
+<div class="player">
+Pemain 1
+</div>
+
+<div id="car1" class="car">
+🚙
+</div>
+
+<div class="finish">
+🏁
+</div>
+
+</div>
+
+
+<div class="lane">
+
+<div class="player">
+Pemain 2
+</div>
+
+<div id="car2" class="car">
+🚕
+</div>
+
+<div class="finish">
+🏁
+</div>
+
+</div>
+
+</div>
+
+
+<!-- SKOR -->
+
+<div class="score">
+
+<div class="score-box">
+
+<strong>🚙 Pemain 1</strong>
+
+<div id="score1">
+0 poin
+</div>
+
+</div>
+
+
+<div class="score-box">
+
+<strong>🚕 Pemain 2</strong>
+
+<div id="score2">
+0 poin
+</div>
+
+</div>
+
+</div>
+
+
+<!-- SOAL -->
+
+<div class="quiz-box">
+
+<h2 id="turn">
+🚙 Giliran Pemain 1
+</h2>
+
+<div id="question" class="question">
+Soal
+</div>
+
+<div id="answers">
+</div>
+
+<div id="feedback">
+</div>
+
+<br>
+
+<button id="next">
+Soal Berikutnya →
+</button>
+
+</div>
+
+</div>
+
+
+<script>
+
+const questions = [
+
+{
+question: "Apa hukum mengeluarkan zakat fitrah?",
+answers: [
+"Sunnah",
+"Wajib",
+"Makruh",
+"Mubah"
+],
+correct: 1
+},
+
+{
+question: "Zakat fitrah dikeluarkan pada bulan?",
+answers: [
+"Ramadan",
+"Muharram",
+"Rajab",
+"Safar"
+],
+correct: 0
+},
+
+{
+question: "Siapa yang berhak menerima zakat?",
+answers: [
+"Muzakki",
+"Mustahik",
+"Pedagang",
+"Guru"
+],
+correct: 1
+},
+
+{
+question: "Zakat fitrah bertujuan untuk?",
+answers: [
+"Membersihkan jiwa",
+"Membeli barang",
+"Menambah kekayaan",
+"Berwisata"
+],
+correct: 0
+},
+
+{
+question: "Zakat fitrah biasanya berupa?",
+answers: [
+"Makanan pokok",
+"Pakaian",
+"Buku",
+"Uang mainan"
+],
+correct: 0
+}
+
+];
+
+
+let currentQuestion = 0;
+
+let currentPlayer = 1;
+
+let score1 = 0;
+
+let score2 = 0;
+
+
+function showQuestion() {
+
+let question = questions[currentQuestion];
+
+document.getElementById("question").innerText =
+question.question;
+
+document.getElementById("turn").innerText =
+currentPlayer == 1
+? "🚙 Giliran Pemain 1"
+: "🚕 Giliran Pemain 2";
+
+
+let answersDiv =
+document.getElementById("answers");
+
+answersDiv.innerHTML = "";
+
+
+question.answers.forEach(function(answer, index) {
+
+let button = document.createElement("button");
+
+button.className = "answer";
+
+button.innerText =
+String.fromCharCode(65 + index) +
+". " +
+answer;
+
+
+button.onclick = function() {
+
+checkAnswer(index);
+
+};
+
+
+answersDiv.appendChild(button);
+
+});
+
+}
+
+
+function checkAnswer(index) {
+
+let correct =
+questions[currentQuestion].correct;
+
+let feedback =
+document.getElementById("feedback");
+
+
+if(index === correct) {
+
+feedback.innerText =
+"✅ BENAR! Mobil maju! 🚗💨";
+
+
+if(currentPlayer === 1) {
+
+score1++;
+
+document.getElementById("score1").innerText =
+score1 + " poin";
+
+document.getElementById("car1").style.left =
+(100 + score1 * 100) + "px";
+
+}
+
+else {
+
+score2++;
+
+document.getElementById("score2").innerText =
+score2 + " poin";
+
+document.getElementById("car2").style.left =
+(100 + score2 * 100) + "px";
+
+}
+
+}
+
+else {
+
+feedback.innerText =
+"❌ Salah. Mobil tidak maju.";
+
+}
+
+};
+
+
+document.getElementById("next").onclick =
+function() {
+
+currentQuestion++;
+
+currentPlayer =
+currentPlayer === 1 ? 2 : 1;
+
+
+if(currentQuestion >= questions.length) {
+
+let winner;
+
+if(score1 > score2) {
+
+winner = "🏆 Pemain 1 MENANG!";
+
+}
+
+else if(score2 > score1) {
+
+winner = "🏆 Pemain 2 MENANG!";
+
+}
+
+else {
+
+winner = "🤝 HASIL SERI!";
+
+}
+
+
+document.getElementById("question").innerText =
+winner;
+
+document.getElementById("answers").innerHTML =
+"<h3>🎉 Permainan selesai!</h3>";
+
+document.getElementById("feedback").innerText =
+"Pemain 1: " + score1 +
+" poin | Pemain 2: " +
+score2 + " poin";
+
+return;
+
+}
+
+showQuestion();
+
+};
+
+
+showQuestion();
+
+</script>
+
+</body>
+</html>
